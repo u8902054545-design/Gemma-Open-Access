@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, ChevronDown, Bot, User } from 'lucide-react';
+import { Send, ChevronDown, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { GemmaIcon } from './GemmaIcon';
 
 type Message = {
   id: string;
@@ -66,9 +67,12 @@ export default function App() {
     <div className="min-h-screen bg-[#1e1e2e] text-white font-sans flex flex-col">
       {/* Header */}
       <header className="p-6 flex justify-between items-center border-b border-[#2a2a3c]">
-        <h1 className="text-2xl font-bold animate-gradient text-gradient">
-          Gemma Open Access
-        </h1>
+        <div className="flex items-center gap-3">
+          <GemmaIcon className="w-8 h-8" />
+          <h1 className="text-2xl font-bold animate-gradient text-gradient">
+            Gemma Open Access
+          </h1>
+        </div>
         
         {/* Model Selector */}
         <div className="relative">
@@ -76,9 +80,7 @@ export default function App() {
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             className="flex items-center gap-2 bg-[#2a2a3c] hover:bg-[#35354a] px-4 py-2 rounded-lg transition-colors font-medium"
           >
-            <span className="w-5 h-5 bg-[#1e1e2e] rounded-full flex items-center justify-center text-xs">
-              {/* Placeholder for model icon */}
-            </span>
+            <GemmaIcon className="w-5 h-5" />
             {selectedModel}
             <ChevronDown size={16} />
           </button>
@@ -100,9 +102,7 @@ export default function App() {
                     }}
                     className="w-full text-left px-4 py-3 hover:bg-[#35354a] flex items-center gap-3 transition-colors"
                   >
-                    <span className="w-5 h-5 bg-[#1e1e2e] rounded-full flex-shrink-0">
-                      {/* Placeholder for model icon */}
-                    </span>
+                    <GemmaIcon className="w-5 h-5 flex-shrink-0" />
                     {model}
                   </button>
                 ))}
@@ -123,7 +123,7 @@ export default function App() {
               className={`flex gap-4 max-w-[85%] ${msg.role === 'user' ? 'ml-auto flex-row-reverse' : ''}`}
             >
               <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${msg.role === 'user' ? 'bg-[#4f46e5]' : 'bg-[#2a2a3c]'}`}>
-                {msg.role === 'user' ? <User size={20} /> : <Bot size={20} />}
+                {msg.role === 'user' ? <User size={20} /> : <GemmaIcon className="w-6 h-6" />}
               </div>
               <div className={`px-6 py-4 rounded-3xl leading-relaxed ${msg.role === 'user' ? 'bg-[#4f46e5] text-white rounded-tr-sm' : 'bg-[#2a2a3c] text-gray-100 rounded-tl-sm'}`}>
                 {msg.content}
@@ -138,10 +138,9 @@ export default function App() {
               className="flex gap-4 max-w-[85%]"
             >
                <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 bg-[#2a2a3c]">
-                <Bot size={20} />
+                <GemmaIcon className="w-6 h-6" />
               </div>
               <div className="px-6 py-4 rounded-3xl bg-[#2a2a3c] text-gray-100 rounded-tl-sm flex items-center gap-3">
-                {/* Skeleton Loader for typing indicator */}
                 <div className="w-2 h-2 rounded-full animate-gradient"></div>
                 <div className="w-2 h-2 rounded-full animate-gradient" style={{ animationDelay: '0.2s' }}></div>
                 <div className="w-2 h-2 rounded-full animate-gradient" style={{ animationDelay: '0.4s' }}></div>
@@ -154,6 +153,7 @@ export default function App() {
 
       {/* Input Section */}
       <footer className="p-6 max-w-4xl w-full mx-auto">
+        {/* Градиентная рамка возвращена сюда */}
         <div className="p-[2px] rounded-3xl animate-gradient">
           <div className="bg-[#1e1e2e] rounded-3xl flex items-end p-2">
             <textarea
