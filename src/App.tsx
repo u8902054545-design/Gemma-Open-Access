@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Send, ChevronDown, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { GemmaIcon } from './GemmaIcon';
-// Импортируем наш конфиг
 import { SUPABASE_ENDPOINT } from './config';
 
 type Message = {
@@ -43,13 +42,12 @@ export default function App() {
 
     const userText = input.trim();
     const newUserMsg: Message = { id: Date.now().toString(), role: 'user', content: userText };
-    
+
     setMessages(prev => [...prev, newUserMsg]);
     setInput('');
     setIsTyping(true);
 
     try {
-      // Отправляем запрос на твой Supabase Edge Function
       const response = await fetch(SUPABASE_ENDPOINT, {
         method: 'POST',
         headers: {
@@ -62,7 +60,7 @@ export default function App() {
       });
 
       if (!response.ok) {
-        throw new Error('Ошибка сети или сервера');
+        throw new Error('Network error');
       }
 
       const data = await response.json();
@@ -70,16 +68,15 @@ export default function App() {
       const newAiMsg: Message = {
         id: (Date.now() + 1).toString(),
         role: 'ai',
-        content: data.content // Тот самый контент, который присылает функция
+        content: data.content
       };
 
       setMessages(prev => [...prev, newAiMsg]);
     } catch (error) {
-      // Если что-то пошло не так, выводим ошибку в чат
       setMessages(prev => [...prev, {
         id: Date.now().toString(),
         role: 'ai',
-        content: 'Произошла ошибка при попытке связаться с Gemma. Попробуй позже!'
+        content: 'An error occurred. Please try again later.'
       }]);
     } finally {
       setIsTyping(false);
@@ -95,7 +92,6 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-black text-white font-sans flex flex-col">
-      {/* Header */}
       <header className="p-6 flex justify-between items-center border-b border-[#1a1a1a]">
         <div className="flex items-center gap-3">
           <GemmaIcon className="w-8 h-8" />
@@ -103,46 +99,8 @@ export default function App() {
             Gemma Open Access
           </h1>
         </div>
-
-        {/* Model Selector */}
-        <div className="relative">
-          <button
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="flex items-center gap-2 bg-[#1a1a1a] hover:bg-[#252525] px-4 py-2 rounded-lg transition-colors font-medium border border-[#333]"
-          >
-            <GemmaIcon className="w-5 h-5" />
-            {selectedModel}
-            <ChevronDown size={16} />
-          </button>
-
-          <AnimatePresence>
-            {isDropdownOpen && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="absolute right-0 mt-2 w-56 bg-[#1a1a1a] border border-[#333] rounded-lg shadow-2xl z-10 overflow-hidden"
-              >
-                {MODELS.map(model => (
-                  <button
-                    key={model}
-                    onClick={() => {
-                      setSelectedModel(model);
-                      setIsDropdownOpen(false);
-                    }}
-                    className="w-full text-left px-4 py-3 hover:bg-[#252525] flex items-center gap-3 transition-colors"
-                  >
-                    <GemmaIcon className="w-5 h-5 flex-shrink-0" />
-                    {model}
-                  </button>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
       </header>
 
-      {/* Chat Area */}
       <main className="flex-1 overflow-y-auto p-6 max-w-4xl w-full mx-auto flex flex-col gap-6">
         <AnimatePresence initial={false}>
           {messages.map((msg) => (
@@ -186,28 +144,67 @@ export default function App() {
         <div ref={messagesEndRef} />
       </main>
 
-      {/* Input Section */}
-      <footer className="p-8 max-w-4xl w-full mx-auto">
-        <div className="p-[1px] rounded-3xl animate-gradient input-glow">
-          <div className="bg-black rounded-3xl flex items-end p-2">
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Message Gemma..."
-              className="flex-1 bg-transparent border-none outline-none resize-none max-h-32 min-h-[44px] px-4 py-3 text-white placeholder-gray-500"
-              rows={1}
-            />
-            <button
-              onClick={handleSend}
-              disabled={!input.trim() || isTyping}
-              className="p-3 bg-[#1a1a1a] hover:bg-[#252525] border border-[#333] disabled:opacity-50 rounded-full transition-colors mb-1 mr-1"
-            >
-              <Send size={20} className={input.trim() && !isTyping ? "text-[#00FFFF]" : "text-gray-600"} />
-            </button>
+      <footer className="w-full max-w-4xl mx-auto fixed bottom-0 left-1/2 -translate-x-1/2">
+        <div className="pt-[1px] px-[1px] rounded-t-[32px] animate-gradient input-glow">
+          <div className="bg-black rounded-t-[31px] flex flex-col p-3 pb-4">
+            
+            <div className="flex items-end gap-2">
+              <textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Message Gemma..."
+                className="flex-1 bg-transparent border-none outline-none resize-none max-h-48 min-h-[44px] px-4 py-3 text-white placeholder-gray-500"
+                rows={1}
+              />
+              <button
+                onClick={handleSend}
+                disabled={!input.trim() || isTyping}
+                className="p-3 bg-[#1a1a1a] hover:bg-[#252525] border border-[#333] disabled:opacity-50 rounded-full transition-colors mb-1"
+              >
+                <Send size={20} className={input.trim() && !isTyping ? "text-[#00FFFF]" : "text-gray-600"} />
+              </button>
+            </div>
+
+            <div className="relative mt-2 px-2">
+              <button
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-xs font-medium"
+              >
+                <GemmaIcon className="w-3.5 h-3.5" />
+                {selectedModel}
+                <ChevronDown size={12} />
+              </button>
+
+              <AnimatePresence>
+                {isDropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute bottom-full left-0 mb-4 w-56 bg-[#1a1a1a] border border-[#333] rounded-xl shadow-2xl z-50 overflow-hidden"
+                  >
+                    {MODELS.map(model => (
+                      <button
+                        key={model}
+                        onClick={() => {
+                          setSelectedModel(model);
+                          setIsDropdownOpen(false);
+                        }}
+                        className="w-full text-left px-4 py-3 hover:bg-[#252525] flex items-center gap-3 transition-colors text-sm"
+                      >
+                        <GemmaIcon className="w-4 h-4 flex-shrink-0" />
+                        {model}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </div>
       </footer>
+      <div className="h-[140px] w-full flex-shrink-0" />
     </div>
   );
 }
