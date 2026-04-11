@@ -17,6 +17,29 @@ body {
   -ms-user-select: none;
 }
 
+/* Спиннер в стиле Google Gemini */
+.google-spinner {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  position: absolute;
+  background: conic-gradient(
+    #4285f4,
+    #ea4335,
+    #fbbc05,
+    #34a853,
+    #4285f4
+  );
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #fff 100%);
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #fff 100%);
+  animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 @keyframes animated-gradient-slow {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }

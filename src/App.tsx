@@ -26,23 +26,27 @@ export default function App() {
     <div className="min-h-screen bg-black text-white font-sans flex flex-col">
       <ChatHeader />
 
-      <main className="flex-1 overflow-y-auto p-6 max-w-4xl w-full mx-auto flex flex-col gap-6">
+      <main className="flex-1 overflow-y-auto p-6 max-w-4xl w-full mx-auto flex flex-col">
         <AnimatePresence initial={false}>
-          {messages.map((msg) => (
-            <ChatMessage 
-              key={msg.id} 
-              role={msg.role} 
-              content={msg.content} 
+          {messages.map((msg, index) => (
+            <ChatMessage
+              key={msg.id}
+              role={msg.role}
+              content={msg.content}
+              // Спиннер включается, если это последнее сообщение от AI и идет загрузка
+              isGenerating={isTyping && index === messages.length - 1 && msg.role === 'ai'}
             />
           ))}
-          
+
+          {/* TypingIndicator можно оставить для визуального веса внизу, 
+              либо закомментировать, так как спиннер уже есть на аватарке */}
           {isTyping && <TypingIndicator />}
         </AnimatePresence>
-        
+
         <div ref={messagesEndRef} />
       </main>
 
-      <ChatInput 
+      <ChatInput
         input={input}
         setInput={setInput}
         handleSend={handleSend}
@@ -55,6 +59,7 @@ export default function App() {
         models={models}
       />
 
+      {/* Нижний отступ, чтобы инпут не перекрывал последние сообщения */}
       <div className="h-[140px] w-full flex-shrink-0" />
     </div>
   );

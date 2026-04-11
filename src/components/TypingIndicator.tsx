@@ -5,19 +5,23 @@ import { GemmaIcon } from '../GemmaIcon';
 export const TypingIndicator: React.FC = () => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.9 }}
-      className="flex gap-4 max-w-[85%]"
+      exit={{ opacity: 0 }}
+      className="flex flex-col items-start mb-8"
     >
-      <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden bg-[#1a1a1a] border border-[#333]">
-        <GemmaIcon className="w-full h-full" />
+      {/* Контейнер аватарки со спиннером */}
+      <div className="relative flex items-center justify-center w-10 h-10">
+        {/* Тот самый спиннер из index.css */}
+        <div className="google-spinner" />
+        
+        <div className="z-10 flex items-center justify-center">
+          <GemmaIcon className="w-7 h-7" />
+        </div>
       </div>
-      <div className="px-6 py-4 rounded-3xl bg-[#1a1a1a] border border-[#333] text-gray-100 rounded-tl-sm flex items-center gap-3">
-        <div className="w-2 h-2 rounded-full animate-gradient"></div>
-        <div className="w-2 h-2 rounded-full animate-gradient" style={{ animationDelay: '0.2s' }}></div>
-        <div className="w-2 h-2 rounded-full animate-gradient" style={{ animationDelay: '0.4s' }}></div>
-      </div>
+
+      {/* Небольшой отступ снизу, чтобы сохранить геометрию чата */}
+      <div className="h-6 w-full" />
     </motion.div>
   );
 };
