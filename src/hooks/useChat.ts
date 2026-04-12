@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import { SUPABASE_ENDPOINT } from '../config';
+import { SUPABASE_ENDPOINT, supabase } from '../config';
 
-// Определение типа сообщения
 export type Message = {
   id: string;
   role: 'user' | 'ai';
@@ -28,7 +27,6 @@ export const useChat = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   
-  // Состояния для управления Snackbar (уведомлениями)
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
 
@@ -45,6 +43,14 @@ export const useChat = () => {
   const handleSend = async () => {
     if (!input.trim() || isTyping) return;
 
+    const { data: { session } } = await supabase.auth.getSession();
+
+    if (!session) {
+      setSnackbarMessage('Пожалуйста, войди в аккаунт через Google.');
+      setIsSnackbarOpen(true);
+      return;
+    }
+
     const userText = input.trim();
     const newUserMsg: Message = { id: Date.now().toString(), role: 'user', content: userText };
 
@@ -55,10 +61,9 @@ export const useChat = () => {
     try {
       const response = await fetch(SUPABASE_ENDPOINT, {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json' 
-          // Если ты добавишь авторизацию на фронтенд позже, 
-          // токен нужно будет передавать здесь в Authorization
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
         },
         body: JSON.stringify({
           message: userText,
@@ -66,24 +71,20 @@ export const useChat = () => {
         }),
       });
 
-      // Читаем тело ответа один раз, чтобы обработать и данные, и ошибки
       const responseData = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        // Выбрасываем ошибку с текстом от сервера (например, "Доступ запрещен")
-        throw new Error(responseData.error || `Server error: ${response.status}`);
+        throw new Error(responseData.error || 'Network error');
       }
 
       const newAiMsg: Message = {
         id: (Date.now() + 1).toString(),
         role: 'ai',
-        content: responseData.content || "No response received."
+        content: responseData.content
       };
 
       setMessages(prev => [...prev, newAiMsg]);
     } catch (error: any) {
-      // Выводим текст ошибки в наш новый красивый Snackbar
-      // Если это ошибка fetch (Network error), пишем понятный текст
       const errorMessage = error.message.includes('Failed to fetch') 
         ? 'Network error: Check your connection' 
         : error.message;
@@ -115,7 +116,6 @@ export const useChat = () => {
     handleSend,
     handleKeyDown,
     models: MODELS,
-    // Экспортируем состояния Snackbar для App.tsx
     snackbarMessage,
     isSnackbarOpen,
     setIsSnackbarOpen
