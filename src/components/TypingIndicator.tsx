@@ -12,12 +12,10 @@ export const TypingIndicator: React.FC = () => {
     >
       <div className="relative flex items-center justify-center w-12 h-12">
         <div className="google-spinner" />
-
         <div className="z-10 flex items-center justify-center">
           <GemmaIcon className="w-9 h-9" />
         </div>
       </div>
-
       <div className="h-6 w-full" />
     </motion.div>
   );

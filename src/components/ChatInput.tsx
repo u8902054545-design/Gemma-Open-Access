@@ -16,19 +16,11 @@ type ChatInputProps = {
 };
 
 export const ChatInput: React.FC<ChatInputProps> = ({
-  input,
-  setInput,
-  handleSend,
-  handleKeyDown,
-  selectedModel,
-  setSelectedModel,
-  isDropdownOpen,
-  setIsDropdownOpen,
-  isTyping,
-  models,
+  input, setInput, handleSend, handleKeyDown, selectedModel, setSelectedModel,
+  isDropdownOpen, setIsDropdownOpen, isTyping, models,
 }) => {
   return (
-    <footer className="w-full max-w-4xl mx-auto fixed bottom-0 left-1/2 -translate-x-1/2">
+    <footer className="w-full max-w-4xl mx-auto fixed bottom-0 left-1/2 -translate-x-1/2 z-50">
       <div className="pt-[1px] px-[1px] rounded-t-[32px] animate-gradient input-glow">
         <div className="bg-black rounded-t-[31px] flex flex-col p-3 pb-4">
           <div className="flex items-end gap-2">
@@ -37,21 +29,20 @@ export const ChatInput: React.FC<ChatInputProps> = ({
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Message Gemma..."
-              className="flex-1 bg-transparent border-none outline-none resize-none max-h-48 min-h-[44px] px-4 py-3 text-white placeholder-gray-500"
+              className="flex-1 bg-transparent border-none outline-none resize-none max-h-48 min-h-[44px] px-4 py-3 text-[var(--md-sys-color-on-background)] placeholder-[var(--md-sys-color-on-surface-variant)]/50"
               rows={1}
             />
             <button
               onClick={handleSend}
               disabled={!input.trim() || isTyping}
-              className="p-3 bg-[#1a1a1a] hover:bg-[#252525] border border-[#333] disabled:opacity-50 rounded-full transition-colors mb-1"
+              className="p-3 bg-[var(--md-sys-color-surface-container-high)] hover:bg-[#333] border border-[var(--md-sys-color-outline)]/30 disabled:opacity-30 rounded-full transition-all mb-1 active:scale-90"
             >
               <Send
                 size={20}
-                className={input.trim() && !isTyping ? "text-[#4285F4]" : "text-gray-600"}
+                className={input.trim() && !isTyping ? "text-[var(--google-blue)]" : "text-[var(--md-sys-color-on-surface-variant)]"}
               />
             </button>
           </div>
-
           <ModelSelector
             selectedModel={selectedModel}
             setSelectedModel={setSelectedModel}
